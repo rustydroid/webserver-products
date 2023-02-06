@@ -1,4 +1,5 @@
 // import express, { request, response } from "express";
+const { request, response } = require("express");
 const express = require("express");
 
 // Import ProductManager class and methods
@@ -31,6 +32,16 @@ app.get("/api/products", async (request, response) => {
   console.log(productsFile);
   response.send(JSON.stringify(productsFile));
 });
+
+app.get("/api/help", (request, response) => {
+  let apis = {
+    api1: "http://localhost:8080/api/products",
+    api2: "http://localhost:8080/api/products?limit=5",
+    api3: "http://localhost:8080/api/products/2",
+    api4: "http://localhost:8080/api/products/3245345534",
+  };
+  return response.send({status: "Info", message: "APIs Testing", data: apis})
+})
 
 app.get("/api/products/:pid", async (request, response) => {
   let pId = parseInt(request.params.pid);
