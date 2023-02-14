@@ -1,10 +1,8 @@
-// import express, { request, response } from "express";
-const { request, response } = require("express");
-const express = require("express");
+import express from 'express';
+import productsRouter from './routes/products.router.js';
+// import cartsRouter from './routes/carts.router.js';
+// import __dirname from "./util.js";
 
-// Import ProductManager class and methods
-const ProductManager = require("./productManager");
-let productManager = new ProductManager();
 
 //Declrando Express para usar sus funciones.
 const app = express();
@@ -12,55 +10,13 @@ const app = express();
 //Preparar la configuracion del servidor para recibir objetos JSON.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use(express.static(__dirname + "/public"));
 
-// Port configuration
+app.use("/api/products", productsRouter);
+// app.use("/api/carts", cartsRouter);
+
 const SERVER_PORT = 8080;
-
-app.get("/api/products", async (request, response) => {
-  let limit = parseInt(request.query.limit);
-  let queryLimited = [];
-  console.log("Consumiendo api GET /api/products...");
-  console.log("Productos actuales Actuales: ");
-  console.log("Esperando Productos");
-  let productsFile = await productManager.returnProducts();
-  if (limit !== undefined && limit <= productsFile.length) {
-    for (let i = 0; i < limit; i++) {
-      queryLimited.push(productsFile[i]);
-    }
-    productsFile = queryLimited;
-  }
-  console.log(productsFile);
-  response.send(JSON.stringify(productsFile));
-});
-
-app.get("/api/help", (request, response) => {
-  let apis = {
-    api1: "http://localhost:8080/api/products",
-    api2: "http://localhost:8080/api/products?limit=5",
-    api3: "http://localhost:8080/api/products/2",
-    api4: "http://localhost:8080/api/products/3245345534",
-  };
-  return response.send({status: "Info", message: "APIs Testing", data: apis})
-})
-
-app.get("/api/products/:pid", async (request, response) => {
-  let pId = parseInt(request.params.pid);
-  let products = await productManager.returnProducts();
-  const productPosition = products.findIndex((product) => product.id === pId);
-  console.log("Product Position", productPosition);
-  if (productPosition < 0) {
-    return response
-      .status(404)
-      .send({ status: "info", message: "Producto no encontrado" });
-  }
-  console.log("Producto encontrado: ", products[productPosition]);
-  return response.send({
-    status: "Success",
-    message: "Producto Actualizado.",
-    data: products[productPosition],
-  });
-});
-
 app.listen(SERVER_PORT, () => {
   console.log("Servidor escuchando por el puerto: " + SERVER_PORT);
+//   console.log(__dirname);
 });
