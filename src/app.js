@@ -1,6 +1,6 @@
 import express from 'express';
 import productsRouter from './routes/products.router.js';
-// import cartsRouter from './routes/carts.router.js';
+import cartsRouter from './routes/carts.router.js';
 // import __dirname from "./util.js";
 
 
@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(express.static(__dirname + "/public"));
 
 app.use("/api/products", productsRouter);
-// app.use("/api/carts", cartsRouter);
+app.use("/api/carts", cartsRouter);
 
 const SERVER_PORT = 8080;
 app.listen(SERVER_PORT, () => {

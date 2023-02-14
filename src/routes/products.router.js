@@ -1,9 +1,10 @@
-import { request, Router } from "express";
+import { Router } from "express";
 import ProductManager from "../modules/productManager.js";
 
 const router = Router();
 let productManager = new ProductManager();
 productManager.checkFileExist();
+
 
 router.get("/", async (request, response) => {
   let limit = parseInt(request.query.limit);
@@ -61,11 +62,13 @@ router.post("/", async (request, response) => {
   });
 });
 
-router.put("/:pid", async(request, response) => {
+router.put("/:pid", async (request, response) => {
   let body = request.body;
   let productId = parseInt(request.params.pid);
   let products = await productManager.returnProducts();
-  const productPosition = products.findIndex((product) => product.id === productId);
+  const productPosition = products.findIndex(
+    (product) => product.id === productId
+  );
   console.log("Product Position", productPosition);
   if (productPosition < 0) {
     return response
@@ -77,6 +80,26 @@ router.put("/:pid", async(request, response) => {
   return response.send({
     status: "Success",
     message: "Producto Actualizado.",
+  });
+});
+
+router.delete("/:pid", async (request, response) => {
+  let productId = parseInt(request.params.pid);
+  let products = await productManager.returnProducts();
+  const productPosition = products.findIndex(
+    (product) => product.id === productId
+  );
+  console.log("Product Position", productPosition);
+  if (productPosition < 0) {
+    return response
+      .status(404)
+      .send({ status: "info", message: "Producto no encontrado" });
+  }
+  console.log("Producto encontrado: ", products[productPosition]);
+  await productManager.deleteProduct(productId);
+  return response.send({
+    status: "Success",
+    message: "Producto Borrado.",
   });
 });
 

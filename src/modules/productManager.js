@@ -34,8 +34,15 @@ class ProductManager {
   readProducts = async () => {
     if (!this.fileReaded) {
       try {
-        let productsRead = await fs.promises.readFile(this.path,this.encoding,(err, data) => {
-            if(err) console.error(`Error reading products from file: ${this.path}, ${error}`);
+        await this.checkFileExist();
+        let productsRead = await fs.promises.readFile(
+          this.path,
+          this.encoding,
+          (err, data) => {
+            if (err)
+              console.error(
+                `Error reading products from file: ${this.path}, ${error}`
+              );
             // console.log(data);
           }
         );
