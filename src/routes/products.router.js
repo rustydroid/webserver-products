@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { request, Router } from "express";
 import ProductManager from "../modules/productManager.js";
 
 const router = Router();
@@ -39,8 +39,9 @@ router.get("/:pid", async (request, response) => {
   });
 });
 
-router.post("/", async(request, response) => {
-  let {title, description, code, price, status,stock, category, thumbnails} = request.body;
+router.post("/", async (request, response) => {
+  let { title, description, code, price, status, stock, category, thumbnails } =
+    request.body;
   let productId = Math.floor(Math.random() * 100000 + 1);
   await productManager.addProduct(
     productId,
@@ -57,6 +58,25 @@ router.post("/", async(request, response) => {
     status: "Success",
     message: "Producto Creado.",
     data: `Producto creado con el ID: ${productId}`,
+  });
+});
+
+router.put("/:pid", async(request, response) => {
+  let body = request.body;
+  let productId = parseInt(request.params.pid);
+  let products = await productManager.returnProducts();
+  const productPosition = products.findIndex((product) => product.id === productId);
+  console.log("Product Position", productPosition);
+  if (productPosition < 0) {
+    return response
+      .status(404)
+      .send({ status: "info", message: "Producto no encontrado" });
+  }
+  console.log("Producto encontrado: ", products[productPosition]);
+  await productManager.updateProduct(productId, body);
+  return response.send({
+    status: "Success",
+    message: "Producto Actualizado.",
   });
 });
 
