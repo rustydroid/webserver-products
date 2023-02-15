@@ -9,12 +9,19 @@ class CartManager {
     this.fileReaded = false;
   }
 
+  printCarts = () => {
+    console.log("Carritos: ", this.carts);
+  }
+
   // Check if Product code already exist in array
   existCart = async (id) => {
     await this.readCarts();
+    console.log("Entrando check exist");
+    console.log("Carritos: ", this.carts);
     const checkExist = this.carts.some(function (cart) {
       return cart.id === id;
     });
+    console.log("Check exist: ", checkExist);
     return checkExist;
   };
 
@@ -78,16 +85,43 @@ class CartManager {
   };
 
   // Add a product checking if the code exist or not
-  addProduct = async (id, products) => {
+  addCart = async (id) => {
     console.log("Listado de carritos Antes: ", this.carts);
-    if (!this.existCart(id)) {
-      await this.readCarts();
-      let newCart = new Cart(id, products);
+    let exist = await this.existCart(id);
+    console.log("exist: ", exist);
+    if (!exist) {
+      let newCart = new Cart(id, []);
       this.carts.push(newCart);
       console.log("Listado de carritos despues: ", this.carts);
     }
+    console.log("EstadoCarrito: ", this.carts);
     await this.saveCarts();
   };
+
+  updateCart = async(cid, pid, qty, pos) => {
+    console.log("Carritos creados",this.carts);
+    let cart = this.carts[pos];
+    console.log("Carrito a editar: ",cart.products);
+    // let productPosition = cart.products.findIndex((product) => product.pid === pid);
+    let productPosition = cart.products.findIndex(
+      (product) => product.pid === pid
+    );
+    console.log("Posicion: ", productPosition);
+    if (productPosition < 0) {
+      console.log("Producto no encontrado");
+      console.log("Agregando producto");
+      let newProduct = { pid: pid, quantity: qty };
+      this.carts[pos].products.push(newProduct);
+      console.log("Carritos Despues: ", this.carts[pos]);
+    } else {
+      console.log("Producto encontrado");
+      console.log(cart.products[productPosition]);
+      let oldQty = parseInt(cart.products[productPosition].quantity);
+      this.carts[pos].products[productPosition].quantity = oldQty + qty;
+      console.log("Carritos Despues: ", this.carts[pos]);
+    }
+    await this.saveCarts();
+  }
 }
 
 export default CartManager;
