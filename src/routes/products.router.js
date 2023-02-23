@@ -5,7 +5,6 @@ const router = Router();
 let productManager = new ProductManager();
 productManager.checkFileExist();
 
-
 router.get("/", async (request, response) => {
   let limit = parseInt(request.query.limit);
   let queryLimited = [];
@@ -24,19 +23,17 @@ router.get("/", async (request, response) => {
 
 router.get("/:pid", async (request, response) => {
   let pId = parseInt(request.params.pid);
-  let products = await productManager.returnProducts();
-  const productPosition = products.findIndex((product) => product.id === pId);
-  console.log("Product Position", productPosition);
-  if (productPosition < 0) {
+  let product = await productManager.getProductById(pId);
+  if (product === null) {
     return response
       .status(404)
       .send({ status: "info", message: "Producto no encontrado" });
   }
-  console.log("Producto encontrado: ", products[productPosition]);
+  console.log("Producto encontrado: ", product);
   return response.send({
     status: "Success",
     message: "Producto Encontrado.",
-    data: products[productPosition],
+    data: product,
   });
 });
 
@@ -64,19 +61,14 @@ router.post("/", async (request, response) => {
 
 router.put("/:pid", async (request, response) => {
   let body = request.body;
-  let productId = parseInt(request.params.pid);
-  let products = await productManager.returnProducts();
-  const productPosition = products.findIndex(
-    (product) => product.id === productId
-  );
-  console.log("Product Position", productPosition);
-  if (productPosition < 0) {
+  let pId = parseInt(request.params.pid);
+  let product = await productManager.getProductById(pId);
+  if (product === null) {
     return response
       .status(404)
       .send({ status: "info", message: "Producto no encontrado" });
   }
-  console.log("Producto encontrado: ", products[productPosition]);
-  await productManager.updateProduct(productId, body);
+  await productManager.updateProduct(pId, body);
   return response.send({
     status: "Success",
     message: "Producto Actualizado.",
@@ -84,19 +76,14 @@ router.put("/:pid", async (request, response) => {
 });
 
 router.delete("/:pid", async (request, response) => {
-  let productId = parseInt(request.params.pid);
-  let products = await productManager.returnProducts();
-  const productPosition = products.findIndex(
-    (product) => product.id === productId
-  );
-  console.log("Product Position", productPosition);
-  if (productPosition < 0) {
+  let pId = parseInt(request.params.pid);
+  let product = await productManager.getProductById(pId);
+  if (product === null) {
     return response
       .status(404)
       .send({ status: "info", message: "Producto no encontrado" });
   }
-  console.log("Producto encontrado: ", products[productPosition]);
-  await productManager.deleteProduct(productId);
+  await productManager.deleteProduct(pId);
   return response.send({
     status: "Success",
     message: "Producto Borrado.",

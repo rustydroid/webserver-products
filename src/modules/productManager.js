@@ -153,25 +153,18 @@ class ProductManager {
   };
 
   // Search if Product id exist in array, if not return a message
-  getProductById = (id) => {
-    fs.access(this.path, (err) => {
-      if (err) throw Error("File productos no existe");
-      else {
-        fs.readFile(this.path, this.encoding, (err, content) => {
-          if (err) throw Error("No se pudo leer el archivo");
-          else {
-            this.products = [];
-            this.products = JSON.parse(content);
-            const checkExist = this.products.some(function (product) {
-              if (product.id === id) {
-                console.log("Producto Encontrado");
-                console.log(product);
-              } else console.log("Producto Inexistente");
-            });
-          }
-        });
+  getProductById = async (id) => {
+    await this.readProducts();
+    let prod = null;
+    let found = this.products.some((product) => {
+      if (product.id === id) {
+        console.log("Producto Encontrado");
+        prod = product;
+      } else {
+        console.log("Producto NO Encontrado");
       }
     });
+    return prod;
   };
 }
 
