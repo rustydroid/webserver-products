@@ -9,6 +9,11 @@ router.get("/", async (req, res) => {
   res.render("home", {style: 'home.css', products});
 });
 
+router.get("/realtimeproducts", (req, res) => {
+  // let products = await productManager.returnProducts();
+  res.render("realTimeProducts", { style: "home.css"});
+});
+
 // router.get("/messages", (req, res) => {
 //   res.render("messages");
 // });

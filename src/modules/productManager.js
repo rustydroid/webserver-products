@@ -90,20 +90,11 @@ class ProductManager {
   };
 
   // Add a product checking if the code exist or not
-  addProduct = async (
-    id,
-    title,
-    desc,
-    code,
-    price,
-    status,
-    stock,
-    category,
-    thumb
-  ) => {
+  addProduct = async (id,title,desc,code,price,status,stock,category,thumb) => {
     console.log("Listado de productos Antes: ", this.products);
     if (!this.existProduct(code)) {
       await this.readProducts();
+      
       let newProduct = new Product(
         id,
         title,
