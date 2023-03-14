@@ -49,7 +49,7 @@ export const createCart = async (req, res) => {
   }
 };
 
-export const updateCartById = async (req, res) => {
+export const addProductToCart = async (req, res) => {
   try {
     let { cId, pId } = res.params;
     let body = req.body;
