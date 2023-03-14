@@ -1,10 +1,10 @@
 import express from "express";
 import handlebars from "express-handlebars";
-import { Server } from "socket.io";
-import ProductManager from "./modules/productManager.js";
+// import { Server } from "socket.io";
+// import ProductManager from "./modules/productManager.js";
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
-import viewRouter from "./routes/views.router.js";
+// import viewRouter from "./routes/views.router.js";
 import __dirname from "./util.js";
 
 //Declrando Express para usar sus funciones.
@@ -33,6 +33,7 @@ const httpServer = app.listen(SERVER_PORT, () => {
 });
 
 // Instancio socket.io
+/*
 const socketServer = new Server(httpServer);
 
 socketServer.on("connection", (socket) => {
@@ -46,4 +47,4 @@ socketServer.on("connection", (socket) => {
     let products = await productManager.returnProducts();
     socket.emit("get_products", products);
   });
-});
+});*/
