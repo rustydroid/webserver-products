@@ -1,4 +1,4 @@
-import Cart from "./cart.js";
+import Cart from "../objects/cart.js";
 import fs from "fs";
 
 class CartManager {
@@ -11,7 +11,7 @@ class CartManager {
 
   printCarts = () => {
     console.log("Carritos: ", this.carts);
-  }
+  };
 
   // Check if Product code already exist in array
   existCart = async (id) => {
@@ -98,10 +98,10 @@ class CartManager {
     await this.saveCarts();
   };
 
-  updateCart = async(cid, pid, qty, pos) => {
-    console.log("Carritos creados",this.carts);
+  updateCart = async (cid, pid, qty, pos) => {
+    console.log("Carritos creados", this.carts);
     let cart = this.carts[pos];
-    console.log("Carrito a editar: ",cart.products);
+    console.log("Carrito a editar: ", cart.products);
     // let productPosition = cart.products.findIndex((product) => product.pid === pid);
     let productPosition = cart.products.findIndex(
       (product) => product.pid === pid
@@ -121,7 +121,7 @@ class CartManager {
       console.log("Carritos Despues: ", this.carts[pos]);
     }
     await this.saveCarts();
-  }
+  };
 }
 
 export default CartManager;

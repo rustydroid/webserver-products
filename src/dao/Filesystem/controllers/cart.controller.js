@@ -1,13 +1,11 @@
-import { response, Router } from "express";
-import CartManager from "../dao/Filesystem/managers/cartManager.js";
-import ProductManager from "../dao/Filesystem/managers/productManager.js";
+import CartManager from '../managers/cartManager.js';
+import ProductManager from "../managers/productManager.js";
 
-const router = Router();
 let cartManager = new CartManager();
 let productManager = new ProductManager();
 cartManager.checkFileExist();
 
-router.get("/", async (request, response) => {
+export const getCarts = async (request, response) => {
   let limit = parseInt(request.query.limit);
   let queryLimited = [];
   console.log("Consumiendo api GET /api/carts...");
@@ -21,9 +19,9 @@ router.get("/", async (request, response) => {
   }
   console.log(cartsFile);
   response.send(JSON.stringify(cartsFile));
-});
+};
 
-router.get("/:cid", async (request, response) => {
+export const getCartById = async (request, response) => {
   let cId = parseInt(request.params.cid);
   let carts = await cartManager.readCarts();
   const cartPosition = carts.findIndex((cart) => cart.id === cId);
@@ -39,9 +37,9 @@ router.get("/:cid", async (request, response) => {
     message: "Carrito Encontrado.",
     data: carts[cartPosition],
   });
-});
+};
 
-router.post("/", async (request, response) => {
+export const createCart = async (request, response) => {
   let products = request.body;
   let cartId = Math.floor(Math.random() * 100000 + 1);
   await cartManager.addCart(cartId);
@@ -50,9 +48,9 @@ router.post("/", async (request, response) => {
     message: "Carrito Creado.",
     data: `Carrito creado con el ID: ${cartId}`,
   });
-});
+};
 
-router.post("/:cid/product/:pid", async (request, response) => {
+export const addProductToCart = async (request, response) => {
   let cid = parseInt(request.params.cid);
   let pid = parseInt(request.params.pid);
   let body = request.body;
@@ -79,6 +77,4 @@ router.post("/:cid/product/:pid", async (request, response) => {
     message: "Carrito Actualizado.",
     data: carts[cartPosition],
   });
-});
-
-export default router;
+};

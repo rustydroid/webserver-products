@@ -1,5 +1,5 @@
 // Import Product definition
-import Product from "./product.js";
+import Product from '../objects/product.js'
 import fs from "fs";
 
 class ProductManager {
