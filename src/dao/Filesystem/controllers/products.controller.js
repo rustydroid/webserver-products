@@ -22,7 +22,7 @@ export const getProducts = async (request, response) => {
   response.send(JSON.stringify(productsFile));
 };
 
-export const getProductsById = async (request, response) => {
+export const getProductById = async (request, response) => {
   let pId = parseInt(request.params.pid);
   let product = await productManager.getProductById(pId);
   if (product === null) {

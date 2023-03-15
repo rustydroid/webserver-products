@@ -51,39 +51,51 @@ export const createCart = async (req, res) => {
 
 export const addProductToCart = async (req, res) => {
   try {
-    let { cId, pId } = res.params;
+    let cId = req.params.cid;
+    let pId = req.params.pid;
     let body = req.body;
     let qty = parseInt(body["quantity"]);
     if (!cId || !pId)
       return res.status(400).send({ error: "Datos requeridos no enviados" });
-    let cart = cartModel.findOne({ _id: cId });
-    let product = productModel.findOne({ _id: pId });
+    let cart = await cartModel.findOne({ _id: cId });
+    let product = await productModel.findOne({ _id: pId });
     if (cart.length === 0 || product.length === 0)
       return res.status(400).send({
         error: "Carrito o Producto Inexistente",
         cart: cart.length,
         product: product.length,
       });
-    let productPosition = cart.products.findIdex(
-      (product) => product.pId === pId
+    let productPosition = cart.products.findIndex(
+      (product) => product.pid === pId
     );
     if (productPosition < 0) {
-      let newProduct = { pid: pid, quantity: qty };
+      console.log("Producto no en carrito");
+      let newProduct = { pid: pId, quantity: qty };
+      let listProducts = cart.products;
       let productUpdate = await cartModel.updateOne(
         { _id: cId },
-        { newProduct, ...cart.products }
+        { $push: { products: newProduct } }
       );
       res.send({
         result: "Success, Product updated",
         payload: productUpdate,
       });
     } else {
+      console.log("Producto en carrito");
       let oldQty = parseInt(cart.products[productPosition].quantity);
-      cart.products[productPosition].quantity = oldQty + qty;
-      let productUpdate = await cartModel.updateOne(
-        { _id: cId },
-        { ...cart.products }
-      );
+      let newQty = oldQty + qty;
+      const filter = {
+        _id: cId,
+        products: { $elemMatch: { pid: pId } },
+      };
+      const update = {
+        $set: { "products.$.quantity": newQty },
+      };
+      let productUpdate = await cartModel.updateOne(filter, update);
+      res.send({
+        result: "Success, Product updated",
+        payload: productUpdate,
+      });
     }
   } catch (error) {
     console.error("No se pudo actualizar el carrito: " + error);
@@ -94,22 +106,22 @@ export const addProductToCart = async (req, res) => {
 };
 
 export const deleteCart = async (req, res) => {
-    try {
-          let { cId } = req.params;
-          if (!cId)
-            return res
-              .status(400)
-              .send({ error: "Datos requeridos no enviados" });
-          let cart = await cartModel.findOne({ _id: cId });
-          if (cart.length === 0)
-            return res.status(400).send({
-              error: "Not Found",
-              message: "Producto no encontrado",
-            });
-          let deleteCart = await cartModel.deleteOne({ _id: cId });
-          res.send({ result: "Success, Cart deleted", message: deleteCart });
-    } catch (error) {
-        console.error("No se pudo borrar el carrito: " + error);
-        res.status(500).send({ error: "No se pudo borrar el carrito", message: error });
-    }
+  try {
+    let cId = req.params.cid;
+    if (!cId)
+      return res.status(400).send({ error: "Datos requeridos no enviados" });
+    let cart = await cartModel.findOne({ _id: cId });
+    if (cart.length === 0)
+      return res.status(400).send({
+        error: "Not Found",
+        message: "Carrito no encontrado",
+      });
+    let deleteCart = await cartModel.deleteOne({ _id: cId });
+    res.send({ result: "Success, Cart deleted", message: deleteCart });
+  } catch (error) {
+    console.error("No se pudo borrar el carrito: " + error);
+    res
+      .status(500)
+      .send({ error: "No se pudo borrar el carrito", message: error });
+  }
 };

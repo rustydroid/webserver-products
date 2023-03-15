@@ -17,7 +17,7 @@ const router = Router();
 router.get("/", getCarts);
 router.get("/:cid", getCartById);
 router.post("/", createCart);
-router.post("/:cid/product/:pid", addProductToCart);
+router.put("/:cid/product/:pid", addProductToCart);
 router.delete("/:cid", deleteCart);
 
 export default router;

@@ -14,7 +14,7 @@ export const getProducts = async (req, res) => {
 
 export const getProductById = async (req, res) => {
   try {
-    let { pId } = req.params;
+      let pId = req.params.pid;
     if (!pId)
       return res.status(400).send({ error: "Datos requeridos no enviados" });
     let product = await productModel.find({ _id: pId });
@@ -50,12 +50,18 @@ export const createProduct = async (req, res) => {
 
 export const updateProductById = async (req, res) => {
   try {
-    let { pId } = req.params;
-    let body = req.body;
+    let pId = req.params.pid;
+      let body = req.body;
+      console.log("Update params: ", req.params.pid);
+    console.log("Update ProductID: ", pId);
     if (!pId)
-      return res.status(400).send({ error: "Datos requeridos no enviados" });
+      return res
+        .status(400)
+        .send({
+          error: "Datos requeridos no enviados updateProduct",
+          message: pId,
+        });
     let product = await productModel.find({ _id: pId });
-    console.log("Producto result: " + product);
     if (product.length === 0)
       return res.send({
         result: "Not Found",
@@ -76,11 +82,10 @@ export const updateProductById = async (req, res) => {
 
 export const deleteProduct = async (req, res) => {
   try {
-    let { pId } = req.params;
+    let pId = req.params.pid;
     if (!pId)
       return res.status(400).send({ error: "Datos requeridos no enviados" });
     let product = await productModel.find({ _id: pId });
-    console.log("Producto result: " + product);
     if (product.length === 0)
       return res.send({
         result: "Not Found",
@@ -89,9 +94,9 @@ export const deleteProduct = async (req, res) => {
     let deleteProduct = await productModel.deleteOne({ _id: pId });
     res.send({ result: "Success, Producto borrado" });
   } catch (error) {
-      console.error("No se pudo borrar el producto: " + error);
-      res
-        .status(500)
-        .send({ error: "No se pudo borrar el producto", message: error });
+    console.error("No se pudo borrar el producto: " + error);
+    res
+      .status(500)
+      .send({ error: "No se pudo borrar el producto", message: error });
   }
 };
