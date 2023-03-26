@@ -8,15 +8,6 @@ import {getProducts, getProductById, createProduct, updateProductById, deletePro
 
 const router = Router();
 
-// router.get("/", getProducts);
-
-// router.get("/:pid", getProductById);
-
-// router.post("/", createProduct);
-
-// router.put("/:pid", updateProductById);
-
-// router.delete("/:pid", deleteProduct);
 
 router.route("/").get(getProducts).post(createProduct);
 router

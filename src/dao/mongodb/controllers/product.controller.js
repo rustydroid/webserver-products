@@ -2,8 +2,34 @@ import { productModel } from "../models/product.model.js";
 
 export const getProducts = async (req, res) => {
   try {
-    let products = await productModel.find();
-    res.send({ result: "Success", payload: products });
+    // Check if limit param was provided
+    if (req.query.limit) {
+      let limit = parseInt(req.query.limit);
+      let products = await productModel.find().limit(limit);
+      // Check if sort param was provided
+      if (req.query.sort) {
+        let sortParam = req.query.sort;
+        if (sortParam === "asc") {
+          let products = await productModel
+            .find()
+            .limit(limit)
+            .sort({ price: 1 });
+          res.send({ result: "Success", payload: products });
+        }
+        if (sortParam === "desc") {
+          let products = await productModel
+            .find()
+            .limit(limit)
+            .sort({ price: -1 });
+          res.send({ result: "Success", payload: products });
+        }
+      } else {
+        res.send({ result: "Success", payload: products });
+      }
+    }
+
+    // let products = await productModel.find();
+    // res.send({ result: "Success", payload: products });
   } catch (error) {
     console.error("No se pudo obtener los productos: " + error);
     res
